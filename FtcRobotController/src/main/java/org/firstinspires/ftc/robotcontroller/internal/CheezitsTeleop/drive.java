@@ -1,18 +1,16 @@
-package org.firstinspires.ftc.robotcontroller.internal;
-
+package org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class drive {
-    private Servo topLeftServo1;
-    private Servo topLeftServo2;
-    private Servo topRightServo1;
-    private Servo topRightServo2;
-    private Servo bottomLeftServo1;
-    private Servo bottomLeftServo2;
-    private Servo bottomRightServo1;
-    private Servo bottomRightServo2;
-    private double theta;
+    private final Servo topLeftServo1;
+    private final Servo topLeftServo2;
+    private final Servo topRightServo1;
+    private final Servo topRightServo2;
+    private final Servo bottomLeftServo1;
+    private final Servo bottomLeftServo2;
+    private final Servo bottomRightServo1;
+    private final Servo bottomRightServo2;
 
     public drive(HardwareMap hardwareMap){
         topLeftServo1 = hardwareMap.get(Servo.class, "topLeftServo1");
@@ -35,6 +33,8 @@ public class drive {
             bottomRightServo2.setPosition(0.5);
             bottomLeftServo1.setPosition(0);
             bottomLeftServo2.setPosition(0);
+            // add wheel movement logic
+            //so that when you turn the wheels also move in the correct direction
         }
         else if(turn < 0){
             topLeftServo1.setPosition(0);
@@ -45,12 +45,12 @@ public class drive {
             bottomRightServo2.setPosition(0);
             bottomLeftServo1.setPosition(0.5);
             bottomLeftServo2.setPosition(0.5);
+            // add wheel movement logic
         }
     }
     public double getAngle(double ypos, double xpos){
         // java function atan 2 returns in radians so divide by pi to get servo position
-        theta = (Math.atan(ypos/xpos))/Math.PI;
-        return theta;
+        return (Math.atan(ypos / xpos)) / Math.PI;
     }
 
     public void turnDriveMotors(double angle){
@@ -63,12 +63,10 @@ public class drive {
         bottomLeftServo1.setPosition(angle);
         bottomLeftServo2.setPosition(angle);
     }
-    public void moveForward(double ypos){
-        if(ypos>0){
-            // Move forward
-        }
-        else if(ypos<0){
-            // move backward
-        }
+    public void moveForward(){
+        //move forward
+    }
+    public void moveBackward(){
+        //move backward
     }
 }
