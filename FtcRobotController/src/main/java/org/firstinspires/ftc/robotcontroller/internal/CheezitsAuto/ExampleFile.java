@@ -1,43 +1,63 @@
-package org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop;
+package org.firstinspires.ftc.robotcontroller.internal.CheezitsAuto;
 
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Cheezits Auto Servo", group="Cheezits")
+import org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop.drive;
+
+// This is an example file using Squid that takes the robot from its starting position to the point (24,0)
+// it continously updates its position and stops when it reaches within 1 inch of the target position
+@Autonomous(name="Cheezits Auto SquID", group="Cheezits")
 public class ExampleFile extends LinearOpMode {
-
-    private double xpos;
-    private double ypos;
-    private double servoPosition;
     private drive myHardware;
+    private DrivetrainSquIDController drivetrain;
+    private Pose2d currentPose;
+    private Pose2d targetPose;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize hardware
+        // Initialize hardware and drivetrain
         myHardware = new drive(this.hardwareMap);
+        drivetrain = new DrivetrainSquIDController();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart(); // Wait for the start signal
 
-        // Example movement: Move forward for 3 seconds, then stop
-        long moveTime = 3000; // Move for 3 seconds
-        long startTime = System.currentTimeMillis();
+        // Set starting position and target position
+        currentPose = new Pose2d(0, 0, new Rotation2d(0)); // Start at (0,0)
+        targetPose = new Pose2d(24, 0, new Rotation2d(0)); // Move to (24,0)
 
-        while (opModeIsActive() && (System.currentTimeMillis() - startTime < moveTime)) {
-            xpos = 0;   // No strafing
-            ypos = 1;   // Move forward
+        ElapsedTime runtime = new ElapsedTime();
 
-            // Calculate servo positions based on movement
-            servoPosition = myHardware.getAngle(ypos, xpos);
+        while (opModeIsActive()) {
+            // Calculate movement using SquIDController
+            Pose2d movement = drivetrain.calculate(targetPose, currentPose, new Pose2d(0, 0, new Rotation2d(0)));
+
+            // Convert movement to servo position
+            double servoPosition = myHardware.getAngle(movement.getY(), movement.getX());
             myHardware.turnDriveMotors(servoPosition);
 
-            telemetry.addData("Moving Forward", "Servo Pos: %.2f", servoPosition);
+            // Update position estimation
+            currentPose = new Pose2d(
+                    currentPose.getX() + movement.getX() * runtime.seconds(),
+                    currentPose.getY() + movement.getY() * runtime.seconds(),
+                    new Rotation2d(0)
+            );
+
+            // Stop if close to target
+            if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 1) {
+                break;
+            }
+
+            telemetry.addData("Target Pose", targetPose);
+            telemetry.addData("Current Pose", currentPose);
+            telemetry.addData("Servo Position", servoPosition);
             telemetry.update();
         }
-
-        // Stop the servos after moving
-        myHardware.stopServos();
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.internal;
+package org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
