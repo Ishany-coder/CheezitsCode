@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop.drive;
+import org.firstinspires.ftc.teamcode.CheezitsTeleop.Drive;
 
 @Autonomous(name="Cheezits Turn Test", group="Cheezits")
 public class exampleTurn extends LinearOpMode {
 
-    private drive myHardware;
+    private Drive myHardware;
     private DrivetrainSquIDController drivetrain;
     private Pose2d currentPose;
     private Pose2d targetPose;
@@ -19,7 +19,7 @@ public class exampleTurn extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize hardware and drivetrain
-        myHardware = new drive(this.hardwareMap);
+        myHardware = new Drive(this.hardwareMap);
         drivetrain = new DrivetrainSquIDController();
 
         telemetry.addData("Status", "Initialized");
