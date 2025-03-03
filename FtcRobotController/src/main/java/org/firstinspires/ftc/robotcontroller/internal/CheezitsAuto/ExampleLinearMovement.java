@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop.drive;
 // This is an example file using Squid that takes the robot from its starting position to the point (24,0)
 // it continously updates its position and stops when it reaches within 1 inch of the target position
 @Autonomous(name="Cheezits Auto SquID", group="Cheezits")
-public class ExampleFile extends LinearOpMode {
+public class ExampleLinearMovement extends LinearOpMode {
     private drive myHardware;
     private DrivetrainSquIDController drivetrain;
     private Pose2d currentPose;
@@ -59,5 +59,6 @@ public class ExampleFile extends LinearOpMode {
             telemetry.addData("Servo Position", servoPosition);
             telemetry.update();
         }
+        myHardware.stopServos();
     }
 }

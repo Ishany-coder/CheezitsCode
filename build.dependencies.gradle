@@ -14,5 +14,6 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:10.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.ftclib.ftclib:vision:2.1.0'
+    implementation 'com.acmerobotics.roadrunner:ftc:0.1.15'
 }
 
