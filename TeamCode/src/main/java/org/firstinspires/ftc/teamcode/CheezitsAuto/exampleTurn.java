@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.internal.CheezitsAuto;
+package org.firstinspires.ftc.teamcode.CheezitsAuto;
 
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;

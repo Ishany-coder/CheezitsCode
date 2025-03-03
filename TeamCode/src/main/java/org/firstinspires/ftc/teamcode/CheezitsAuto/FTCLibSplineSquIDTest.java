@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.internal.CheezitsAuto;
+package org.firstinspires.ftc.teamcode.CheezitsAuto;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -10,7 +10,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop.Drive;
+import org.firstinspires.ftc.teamcode.CheezitsTeleop.Drive;
 
 @Autonomous(name = "FTCLib Spline SquID Drive", group = "Cheezits")
 public class FTCLibSplineSquIDTest extends CommandOpMode {

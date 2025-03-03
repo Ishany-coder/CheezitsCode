@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.robotcontroller.internal.CheezitsAuto;
+package org.firstinspires.ftc.teamcode.CheezitsAuto;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.geometry.Pose2d;
-import org.firstinspires.ftc.robotcontroller.internal.CheezitsTeleop.Drive;
+import org.firstinspires.ftc.teamcode.CheezitsTeleop.Drive;
 
 public class DriveSplineCommand extends CommandBase {
     private final Drive drive;

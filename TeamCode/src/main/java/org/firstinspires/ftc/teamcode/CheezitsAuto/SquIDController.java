@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.internal.CheezitsAuto;
+package org.firstinspires.ftc.teamcode.CheezitsAuto;
 
 public class SquIDController {
     double p,i,d;
