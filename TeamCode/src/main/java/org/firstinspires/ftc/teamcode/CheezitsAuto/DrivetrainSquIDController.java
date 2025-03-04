@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.CheezitsAuto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+@Config
 public class DrivetrainSquIDController {
-
     // Tuning parameter to adjust how loop time affects velocity-based distance calculation
     public static double looptimeAdjuster = 15;
 
@@ -90,5 +90,4 @@ public class DrivetrainSquIDController {
         // Quadratic regression equation to approximate travel distance
         return 0.00286 * velocity * velocity + 0.304 * velocity - 0.837;
     }
-
 }
