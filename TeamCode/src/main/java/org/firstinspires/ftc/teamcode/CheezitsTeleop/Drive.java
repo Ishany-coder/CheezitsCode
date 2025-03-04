@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Drive {
+    private final int GearRatio = 8;
     private final Servo topLeftServo1;
     private final Servo topLeftServo2;
     private final Servo topRightServo1;
@@ -24,82 +25,78 @@ public class Drive {
         bottomRightServo2 = hardwareMap.get(Servo.class, "bottomRightServo2");
     }
 
-    /**
-     * Turns the drivetrain servos to simulate turning movement.
-     * @param turn The turn direction (positive = right, negative = left).
-     */
     public void turn(double turn) {
-        if (turn > 0) {
-            topLeftServo1.setPosition(0.5);
-            topLeftServo2.setPosition(0.5);
-            topRightServo1.setPosition(0);
-            topRightServo2.setPosition(0);
-            bottomRightServo1.setPosition(0.5);
-            bottomRightServo2.setPosition(0.5);
-            bottomLeftServo1.setPosition(0);
-            bottomLeftServo2.setPosition(0);
-        } else if (turn < 0) {
-            topLeftServo1.setPosition(0);
-            topLeftServo2.setPosition(0);
-            topRightServo1.setPosition(0.5);
-            topRightServo2.setPosition(0.5);
-            bottomRightServo1.setPosition(0);
-            bottomRightServo2.setPosition(0);
-            bottomLeftServo1.setPosition(0.5);
-            bottomLeftServo2.setPosition(0.5);
+        double adjustedTurn = turn * GearRatio;
+
+        int wholeRotations = (int) adjustedTurn;  // Number of whole rotations
+        double fractionalRotation = adjustedTurn - wholeRotations; // Remaining fractional rotation
+
+        for (int i = 0; i < wholeRotations; i++) {
+            setServoPositions(1, 1, 1, 1, 1, 1, 1, 1);
+            delay(50); // Allow servos time to complete each rotation
+            setServoPositions(0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        if (fractionalRotation > 0) {
+            setServoPositions(fractionalRotation, fractionalRotation, fractionalRotation, fractionalRotation,
+                    fractionalRotation, fractionalRotation, fractionalRotation, fractionalRotation);
         }
     }
 
-    /**
-     * Converts movement input to servo angles and applies it.
-     * @param ypos The forward/backward movement input.
-     * @param xpos The left/right movement input.
-     * @return The calculated angle for servo movement.
-     */
     public double getAngle(double ypos, double xpos) {
-        return (Math.atan2(ypos, xpos)) / Math.PI; // Normalize between [-1,1]
+        return (Math.atan2(ypos, xpos)) / Math.PI;
     }
 
-    /**
-     * Moves the drivetrain in a specific direction.
-     * @param angle The movement angle for servos.
-     */
     public void turnDriveMotors(double angle) {
-        topLeftServo1.setPosition(angle);
-        topLeftServo2.setPosition(angle);
-        topRightServo1.setPosition(angle);
-        topRightServo2.setPosition(angle);
-        bottomRightServo1.setPosition(angle);
-        bottomRightServo2.setPosition(angle);
-        bottomLeftServo1.setPosition(angle);
-        bottomLeftServo2.setPosition(angle);
+        double adjustedAngle = angle * GearRatio;
+
+        int wholeRotations = (int) adjustedAngle;
+        double fractionalRotation = adjustedAngle - wholeRotations;
+
+        for (int i = 0; i < wholeRotations; i++) {
+            setServoPositions(1, 1, 1, 1, 1, 1, 1, 1);
+            delay(50);
+            setServoPositions(0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        if (fractionalRotation > 0) {
+            setServoPositions(fractionalRotation, fractionalRotation, fractionalRotation, fractionalRotation,
+                    fractionalRotation, fractionalRotation, fractionalRotation, fractionalRotation);
+        }
     }
 
-    /**
-     * Moves the robot forward.
-     */
     public void moveForward() {
-        // Implement forward movement logic
+        setServoPositions(1, 1, 1, 1, 1, 1, 1, 1);
     }
 
-    /**
-     * Moves the robot backward.
-     */
     public void moveBackward() {
-        // Implement backward movement logic
+        setServoPositions(0, 0, 0, 0, 0, 0, 0, 0);
     }
 
-    /**
-     * Stops all servos by maintaining their current position.
-     */
     public void stopServos() {
-        topLeftServo1.setPosition(topLeftServo1.getPosition());
-        topLeftServo2.setPosition(topLeftServo2.getPosition());
-        topRightServo1.setPosition(topRightServo1.getPosition());
-        topRightServo2.setPosition(topRightServo2.getPosition());
-        bottomLeftServo1.setPosition(bottomLeftServo1.getPosition());
-        bottomLeftServo2.setPosition(bottomLeftServo2.getPosition());
-        bottomRightServo1.setPosition(bottomRightServo1.getPosition());
-        bottomRightServo2.setPosition(bottomRightServo2.getPosition());
+        setServoPositions(topLeftServo1.getPosition(), topLeftServo2.getPosition(),
+                topRightServo1.getPosition(), topRightServo2.getPosition(),
+                bottomLeftServo1.getPosition(), bottomLeftServo2.getPosition(),
+                bottomRightServo1.getPosition(), bottomRightServo2.getPosition());
+    }
+
+    private void setServoPositions(double tl1, double tl2, double tr1, double tr2,
+                                   double bl1, double bl2, double br1, double br2) {
+        topLeftServo1.setPosition(tl1);
+        topLeftServo2.setPosition(tl2);
+        topRightServo1.setPosition(tr1);
+        topRightServo2.setPosition(tr2);
+        bottomLeftServo1.setPosition(bl1);
+        bottomLeftServo2.setPosition(bl2);
+        bottomRightServo1.setPosition(br1);
+        bottomRightServo2.setPosition(br2);
+    }
+
+    private void delay(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
