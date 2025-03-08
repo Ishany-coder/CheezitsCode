@@ -12,7 +12,8 @@ import org.firstinspires.ftc.teamcode.CheezitsTeleop.Drive;
 public class DriveSplineCommand extends CommandBase {
     private final Drive drive;
     private final DrivetrainSquIDController squidController;
-    private Pose2d currentPose, targetPose;
+    private Pose2d currentPose;
+    private final Pose2d targetPose;
     private final long duration;
     private long startTime;
 

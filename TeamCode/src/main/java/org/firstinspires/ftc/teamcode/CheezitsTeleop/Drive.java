@@ -66,11 +66,21 @@ public class Drive {
     }
 
     public void moveForward() {
-        setServoPositions(1, 1, 1, 1, 1, 1, 1, 1);
+        // move Forward
+        bottomLeftServo1.setDirection(Servo.Direction.REVERSE);
+        topLeftServo1.setDirection(Servo.Direction.REVERSE);
+        bottomRightServo1.setDirection(Servo.Direction.REVERSE);
+        topRightServo1.setDirection(Servo.Direction.REVERSE);
+        ContinouslyRotate();
     }
 
     public void moveBackward() {
-        setServoPositions(0, 0, 0, 0, 0, 0, 0, 0);
+        // move Backward
+        bottomLeftServo2.setDirection(Servo.Direction.REVERSE);
+        topLeftServo2.setDirection(Servo.Direction.REVERSE);
+        bottomRightServo2.setDirection(Servo.Direction.REVERSE);
+        topRightServo2.setDirection(Servo.Direction.REVERSE);
+        ContinouslyRotate();
     }
 
     public void stopServos() {
@@ -90,6 +100,32 @@ public class Drive {
         bottomLeftServo2.setPosition(bl2);
         bottomRightServo1.setPosition(br1);
         bottomRightServo2.setPosition(br2);
+    }
+
+    private void ContinouslyRotate() {
+        if (topLeftServo1.getPosition() >= 1 || topLeftServo2.getPosition() >= 1 ||
+                topRightServo1.getPosition() >= 1 || topRightServo2.getPosition() >= 1 ||
+                bottomLeftServo1.getPosition() >= 1 || bottomLeftServo2.getPosition() >= 1 ||
+                bottomRightServo1.getPosition() >= 1 || bottomRightServo2.getPosition() >= 1) {
+
+            topLeftServo1.setPosition(0);
+            topLeftServo2.setPosition(0);
+            topRightServo1.setPosition(0);
+            topRightServo2.setPosition(0);
+            bottomLeftServo1.setPosition(0);
+            bottomLeftServo2.setPosition(0);
+            bottomRightServo1.setPosition(0);
+            bottomRightServo2.setPosition(0);
+        } else {
+            topLeftServo1.setPosition(topLeftServo1.getPosition() + 0.1);
+            topLeftServo2.setPosition(topLeftServo2.getPosition() + 0.1);
+            topRightServo1.setPosition(topRightServo1.getPosition() + 0.1);
+            topRightServo2.setPosition(topRightServo2.getPosition() + 0.1);
+            bottomLeftServo1.setPosition(bottomLeftServo1.getPosition() + 0.1);
+            bottomLeftServo2.setPosition(bottomLeftServo2.getPosition() + 0.1);
+            bottomRightServo1.setPosition(bottomRightServo1.getPosition() + 0.1);
+            bottomRightServo2.setPosition(bottomRightServo2.getPosition() + 0.1);
+        }
     }
 
     private void delay(long ms) {
