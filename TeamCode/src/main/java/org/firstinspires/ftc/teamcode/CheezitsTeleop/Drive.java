@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.CheezitsTeleop;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+//change the code so at certain points it can use 1 motor to turn and move the wheel simultaneously
+
 public class Drive {
     private final int GearRatio = 8;
     private final Servo topLeftServo1;

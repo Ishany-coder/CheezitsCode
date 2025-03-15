@@ -1,93 +1,53 @@
 package org.firstinspires.ftc.teamcode.CheezitsTeleop;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class SinglePodCheezitsSwerve {
-    private final int GearRatio = 8;
-    private final Servo topLeftServo1;
-    private final Servo topLeftServo2;
+public class SinglePodCheezitsSwerve extends LinearOpMode {
+    private double turn;
+    private double xpos;
+    private double ypos;
+    private double ServoPosition;
+    SinglePodDrive driveTrain;
 
-    public SinglePodCheezitsSwerve(HardwareMap hardwareMap) {
-        topLeftServo1 = hardwareMap.get(Servo.class, "topLeftServo1");
-        topLeftServo2 = hardwareMap.get(Servo.class, "topLeftServo2");
-    }
+    @Override
+    public void runOpMode() throws InterruptedException {
+        driveTrain = new SinglePodDrive(this.hardwareMap);
 
+        while (opModeIsActive()) {
+            // Read gamepad input
+            turn = -gamepad1.left_stick_x;
+            xpos = -gamepad1.right_stick_x;
+            ypos = -gamepad1.right_stick_y;
 
-    public void turn(double turn) {
-        double adjustedTurn = turn * GearRatio;
+            // Calculate servo position for turning
+            ServoPosition = driveTrain.getAngle(ypos, xpos);
 
-        int wholeRotations = (int) adjustedTurn;  // Number of whole rotations
-        double fractionalRotation = adjustedTurn - wholeRotations; // Remaining fractional rotation
+            // Schedule turning the wheels first, then moving forward
+            //if ypos > 0 move forward
+            if(ypos > 0) {
+                CommandScheduler.getInstance().schedule(
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> driveTrain.turnDriveMotors(ServoPosition)), // Turn wheels
+                                new InstantCommand(() -> driveTrain.moveForward()) // Move forward
+                        )
+                );
+                // at any point if the ypos is less then 0 then move back
+            } else if (ypos < 0) {
+                CommandScheduler.getInstance().schedule(
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> driveTrain.turnDriveMotors(ServoPosition)),
+                                new InstantCommand(() -> driveTrain.moveBackward())
+                        )
+                );
 
-        for (int i = 0; i < wholeRotations; i++) {
-            setServoPositions(1, 1);
-            delay(50); // Allow servos time to complete each rotation
-            setServoPositions(0, 0);
-        }
-
-        if (fractionalRotation > 0) {
-            setServoPositions(fractionalRotation, fractionalRotation);
-        }
-    }
-
-    public double getAngle(double ypos, double xpos) {
-        return (Math.atan2(ypos, xpos)) / Math.PI;
-    }
-
-    public void turnDriveMotors(double angle) {
-        double adjustedAngle = angle * GearRatio;
-
-        int wholeRotations = (int) adjustedAngle;
-        double fractionalRotation = adjustedAngle - wholeRotations;
-
-        for (int i = 0; i < wholeRotations; i++) {
-            setServoPositions(1, 1);
-            delay(50);
-            setServoPositions(0, 0);
-        }
-
-        if (fractionalRotation > 0) {
-            setServoPositions(fractionalRotation, fractionalRotation);
-        }
-    }
-
-    public void moveForward() {
-        // move Forward
-        topLeftServo1.setDirection(Servo.Direction.REVERSE);
-        ContinouslyRotate();
-    }
-
-    public void moveBackward() {
-        // move Backward
-        topLeftServo2.setDirection(Servo.Direction.REVERSE);
-        ContinouslyRotate();
-    }
-
-    public void stopServos() {
-        setServoPositions(topLeftServo1.getPosition(), topLeftServo2.getPosition());
-    }
-
-    private void setServoPositions(double tl1, double tl2) {
-        topLeftServo1.setPosition(tl1);
-        topLeftServo2.setPosition(tl2);
-    }
-
-    private void ContinouslyRotate() {
-        if (topLeftServo1.getPosition() >= 1 || topLeftServo2.getPosition() >= 1) {
-            topLeftServo1.setPosition(0);
-            topLeftServo2.setPosition(0);
-        } else {
-            topLeftServo1.setPosition(topLeftServo1.getPosition() + 0.1);
-            topLeftServo2.setPosition(topLeftServo2.getPosition() + 0.1);
-        }
-    }
-
-    private void delay(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            }
+            // as long as turn doesnt equal null we turn
+            if (turn != 0) {
+                driveTrain.turn(turn);
+            }
         }
     }
 }
