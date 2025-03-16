@@ -4,17 +4,17 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.Range;
 
 public class SinglePodCheezitsSwerve extends LinearOpMode {
-    private double turn;
-    private double xpos;
-    private double ypos;
-    private double ServoPosition;
-    SinglePodDrive driveTrain;
+    private double turn, xpos, ypos, ServoPosition;
+    private SinglePodDrive driveTrain;
 
     @Override
     public void runOpMode() throws InterruptedException {
         driveTrain = new SinglePodDrive(this.hardwareMap);
+
+        waitForStart(); // Ensure the opmode starts only after pressing start
 
         while (opModeIsActive()) {
             // Read gamepad input
@@ -22,32 +22,31 @@ public class SinglePodCheezitsSwerve extends LinearOpMode {
             xpos = -gamepad1.right_stick_x;
             ypos = -gamepad1.right_stick_y;
 
-            // Calculate servo position for turning
+            // Calculate and constrain servo position
             ServoPosition = driveTrain.getAngle(ypos, xpos);
 
-            // Schedule turning the wheels first, then moving forward
-            //if ypos > 0 move forward
-            if(ypos > 0) {
+            // Handle movement and turning together
+            if (Math.abs(ypos) > 0.1) {
                 CommandScheduler.getInstance().schedule(
-                        new SequentialCommandGroup(
-                                new InstantCommand(() -> driveTrain.turnDriveMotors(ServoPosition)), // Turn wheels
-                                new InstantCommand(() -> driveTrain.moveForward()) // Move forward
-                        )
+                        new InstantCommand(() -> {
+                            if (ypos > 0) {
+                                driveTrain.moveForwardAndTurn(ServoPosition);
+                            } else {
+                                driveTrain.moveBackwardAndTurn(ServoPosition);
+                            }
+                        })
                 );
-                // at any point if the ypos is less then 0 then move back
-            } else if (ypos < 0) {
-                CommandScheduler.getInstance().schedule(
-                        new SequentialCommandGroup(
-                                new InstantCommand(() -> driveTrain.turnDriveMotors(ServoPosition)),
-                                new InstantCommand(() -> driveTrain.moveBackward())
-                        )
-                );
-
+            } else if (Math.abs(ypos) <= 0.1) {
+                driveTrain.stopServos();
             }
-            // as long as turn doesnt equal null we turn
-            if (turn != 0) {
+
+            // Handle turning logic separately
+            if (Math.abs(turn) > 0.1) {
                 driveTrain.turn(turn);
             }
+
+            // Run the command scheduler
+            CommandScheduler.getInstance().run();
         }
     }
 }

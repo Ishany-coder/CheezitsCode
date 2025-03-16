@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.CheezitsTeleop;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 public class SinglePodDrive {
     private final double GearRatio = 0.1;
@@ -13,21 +14,14 @@ public class SinglePodDrive {
         topLeftServo2 = hardwareMap.get(Servo.class, "topLeftServo2");
     }
 
-
+    // 🛠 Improved Turn Function: Only moves one servo at a time
     public void turn(double turn) {
-        double adjustedTurn = turn * GearRatio;
+        double adjustedTurn = Range.clip(turn * GearRatio, -1.0, 1.0);
 
-        int wholeRotations = (int) adjustedTurn;  // Number of whole rotations
-        double fractionalRotation = adjustedTurn - wholeRotations; // Remaining fractional rotation
-
-        for (int i = 0; i < wholeRotations; i++) {
-            setServoPositions(1, 1);
-            delay(50); // Allow servos time to complete each rotation
-            setServoPositions(0, 0);
-        }
-
-        if (fractionalRotation > 0) {
-            setServoPositions(fractionalRotation, fractionalRotation);
+        if (turn > 0) {
+            topLeftServo1.setPosition(0.5 + adjustedTurn * 0.5); // Rotate right
+        } else if (turn < 0) {
+            topLeftServo2.setPosition(0.5 - adjustedTurn * 0.5); // Rotate left
         }
     }
 
@@ -35,59 +29,33 @@ public class SinglePodDrive {
         return (Math.atan2(ypos, xpos)) / Math.PI;
     }
 
-    public void turnDriveMotors(double angle) {
-        double adjustedAngle = angle * GearRatio;
-
-        int wholeRotations = (int) adjustedAngle;
-        double fractionalRotation = adjustedAngle - wholeRotations;
-
-        for (int i = 0; i < wholeRotations; i++) {
-            setServoPositions(1, 1);
-            delay(50);
-            setServoPositions(0, 0);
-        }
-
-        if (fractionalRotation > 0) {
-            setServoPositions(fractionalRotation, fractionalRotation);
-        }
+    // ✅ Moves forward while turning using one servo
+    public void moveForwardAndTurn(double angle) {
+        double adjustedAngle = Range.clip(angle, 0.0, 1.0);
+        topLeftServo1.setPosition(adjustedAngle);
     }
 
+    // ✅ Moves backward while turning using one servo
+    public void moveBackwardAndTurn(double angle) {
+        double adjustedAngle = Range.clip(angle, 0.0, 1.0);
+        topLeftServo2.setPosition(adjustedAngle);
+    }
+
+    // ✅ Move Forward without turning
     public void moveForward() {
-        // move Forward
-        topLeftServo1.setDirection(Servo.Direction.REVERSE);
-        ContinouslyRotate();
+        topLeftServo1.setDirection(Servo.Direction.FORWARD);
+        topLeftServo1.setPosition(1);
     }
 
+    // ✅ Move Backward without turning
     public void moveBackward() {
-        // move Backward
         topLeftServo2.setDirection(Servo.Direction.REVERSE);
-        ContinouslyRotate();
+        topLeftServo2.setPosition(1);
     }
 
+    // ✅ Stop all movement
     public void stopServos() {
-        setServoPositions(topLeftServo1.getPosition(), topLeftServo2.getPosition());
-    }
-
-    private void setServoPositions(double tl1, double tl2) {
-        topLeftServo1.setPosition(tl1);
-        topLeftServo2.setPosition(tl2);
-    }
-
-    private void ContinouslyRotate() {
-        if (topLeftServo1.getPosition() >= 1 || topLeftServo2.getPosition() >= 1) {
-            topLeftServo1.setPosition(0);
-            topLeftServo2.setPosition(0);
-        } else {
-            topLeftServo1.setPosition(topLeftServo1.getPosition() + 0.1);
-            topLeftServo2.setPosition(topLeftServo2.getPosition() + 0.1);
-        }
-    }
-
-    private void delay(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        topLeftServo1.setPosition(0.5);
+        topLeftServo2.setPosition(0.5);
     }
 }
