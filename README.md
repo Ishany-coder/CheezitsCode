@@ -39,8 +39,7 @@ This is the software powering their 2024 season robot, featuring a fully functio
 ### Step 1 — Clone the Repository
 
 ```bash
-git clone https://github.com/Ishany-coder/PPTgenerator.git
-cd PPTgenerator/TheCheezits
+git clone https://github.com/Ishany-coder/CheezitsCode.git
 ```
 
 Step 2 — Open in Android Studio
