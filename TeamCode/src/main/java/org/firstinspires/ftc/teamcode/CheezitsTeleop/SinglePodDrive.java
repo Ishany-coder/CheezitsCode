@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 public class SinglePodDrive {
-    private final double GearRatio = 0.1;
     private final Servo topLeftServo1;
     private final Servo topLeftServo2;
 
@@ -14,43 +13,25 @@ public class SinglePodDrive {
         topLeftServo2 = hardwareMap.get(Servo.class, "topLeftServo2");
     }
 
-    // 🛠 Improved Turn Function: Only moves one servo at a time
-    public void turn(double turn) {
-        double adjustedTurn = Range.clip(turn * GearRatio, -1.0, 1.0);
+    // Moves forward and turns by directly setting servo positions (call repeatedly from loop)
+    public void moveForwardAndTurn(double forwardPower, double turnPower) {
+        double leftPower = Range.clip(forwardPower - turnPower, 0.0, 1.0);
+        double rightPower = Range.clip(forwardPower + turnPower, 0.0, 1.0);
 
-        if (turn > 0) {
-            topLeftServo1.setPosition(0.5 + adjustedTurn * 0.5); // Rotate right
-        } else if (turn < 0) {
-            topLeftServo2.setPosition(0.5 - adjustedTurn * 0.5); // Rotate left
-        }
+        topLeftServo1.setPosition(leftPower);
+        topLeftServo2.setPosition(rightPower);
     }
 
-    public double getAngle(double ypos, double xpos) {
-        return (Math.atan2(ypos, xpos)) / Math.PI;
-    }
+    // Moves backward and turns by directly setting servo positions (call repeatedly from loop)
+    public void moveBackwardAndTurn(double backwardPower, double turnPower) {
+        double leftPower = Range.clip(1.0 - backwardPower + turnPower, 0.0, 1.0);
+        double rightPower = Range.clip(1.0 - backwardPower - turnPower, 0.0, 1.0);
 
-    // ✅ Moves forward while turning using one servo
-    public void moveForwardAndTurn(double angle) {
-        double adjustedAngle = Range.clip(angle, 0.0, 1.0);
-        topLeftServo1.setPosition(adjustedAngle);
+        topLeftServo1.setPosition(leftPower);
+        topLeftServo2.setPosition(rightPower);
     }
-
-    // ✅ Moves backward while turning using one servo
-    public void moveBackwardAndTurn(double angle) {
-        double adjustedAngle = Range.clip(angle, 0.0, 1.0);
-        topLeftServo2.setPosition(adjustedAngle);
-    }
-
-    // ✅ Move Forward without turning
-    public void moveForward() {
-        topLeftServo1.setDirection(Servo.Direction.FORWARD);
-        topLeftServo1.setPosition(1);
-    }
-
-    // ✅ Move Backward without turning
-    public void moveBackward() {
-        topLeftServo2.setDirection(Servo.Direction.REVERSE);
-        topLeftServo2.setPosition(1);
+    public double getAngle(double xPos, double yPos){
+        return Math.toDegrees(Math.atan2(xPos, yPos));
     }
 
     // ✅ Stop all movement

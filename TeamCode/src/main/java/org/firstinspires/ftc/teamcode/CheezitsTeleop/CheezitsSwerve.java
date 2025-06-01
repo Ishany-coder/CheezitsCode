@@ -4,7 +4,8 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+@TeleOp(name="cheezitsSwerve", group="CheezitsTeleOp")
 public class CheezitsSwerve extends LinearOpMode {
     private double turn;
     private double xpos;
